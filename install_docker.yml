@@ -1,0 +1,60 @@
+---
+- hosts: all
+  sudo: yes
+  vars:
+    docker_compose_release: 1.7.1
+  tasks:
+    - name: Update Cache Debian
+      apt: update_cache=yes
+
+    - name: Install requirements
+      apt: state=installed name={{ item }}
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+
+    - apt_key: keyserver=p80.pool.sks-keyservers.net id=58118E89F3A912897C070ADBF76221572C52609D
+
+    - name: Copy source lists
+      template: src=templates/docker.list dest=/etc/apt/sources.list.d/docker.list owner=root group=root mode=664
+
+    - name: Update Cache Debian
+      apt: update_cache=yes
+
+    - name: register running kernel version
+      command: uname -r
+      register: running_kernel
+
+    - debug: msg="kernel is {{ running_kernel.stdout }}"
+ 
+    - name: install linux image
+      apt: name=linux-image-extra-{{ running_kernel.stdout }} state=installed
+    
+    - name: install docker package
+      apt: name=docker-engine state=installed
+
+    - name: Start docker service
+      service: name=docker state=started
+
+    - name: Getting uname -a
+      command: uname -s
+      register: uname_s
+
+    - name: Getting uname -m
+      command: uname -m
+      register: uname_m
+
+    - debug: msg=https://github.com/docker/compose/releases/download/{{ docker_compose_release }}/docker-compose{{ '-' ~ uname_s.stdout ~ '-' ~ uname_m.stdout }}
+
+    - name: Getting docker-compose
+      get_url: url=https://github.com/docker/compose/releases/download/{{ docker_compose_release }}/docker-compose-{{ uname_s.stdout }}-{{ uname_m.stdout }} dest=/usr/local/bin/docker-compose mode=755
+
+    - name: Verify docker-compose version
+      command: docker-compose version --short
+      register: docker_compose_version
+
+    - name: Installing command completion
+      get_url: url=https://raw.githubusercontent.com/docker/compose/{{ docker_compose_version.stdout }}/contrib/completion/bash/docker-compose dest=/etc/bash_completion.d/docker-compose
+
+
+
