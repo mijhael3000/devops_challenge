@@ -1,0 +1,18 @@
+- hosts: all
+  sudo: yes
+  vars:
+    work_dir: /opt/devops_challenge
+    image_version: "tactivos/devops-challenge:0.0.1"
+
+  tasks:
+    - name: create dir for devops challenge
+      file: path={{ work_dir }} state=directory mode=755
+
+    - name: copy docker-compose.yml
+      template: src=templates/docker-compose.yml.j2 dest={{ work_dir }}/docker-compose.yml mode=644
+
+    - name: copy haproxy.cfg file
+      copy: src=devops_challenge_files/haproxy/ dest={{ work_dir }}/haproxy/
+
+    - name: Starting docker instancles
+      command: docker-compose up -d chdir={{ work_dir }}

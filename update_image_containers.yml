@@ -1,0 +1,21 @@
+- hosts: all
+  sudo: yes
+  vars:
+    work_dir: /opt/devops_challenge/
+    image_version: "tactivos/devops-challenge:0.0.1"
+  tasks:
+    - name: deploy nuevo compose file
+      template: src=templates/docker-compose.yml.j2 dest={{ work_dir }}/docker-compose.yml mode=664
+
+    - name: shutdown container app2
+      command: docker-compose stop app2 chdir={{ work_dir }}
+
+    - name: deploy new image for app2
+      command: docker-compose up -d app2 chdir={{ work_dir }}
+
+    - name: shutdown container app1
+      command: docker-compose stop app1 chdir={{ work_dir }}
+
+    - name: deploy new image for app1
+      command: docker-compose up -d app1 chdir={{ work_dir }}
+
