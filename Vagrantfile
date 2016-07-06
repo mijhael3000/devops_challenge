@@ -1,7 +1,12 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby ts=2 sw=2 tw=0 et :
 
-print ENV['PLAYBOOK'] 
+if ENV.has_key?("PLAYBOOK")
+   playbook = ENV['PLAYBOOK']
+else
+  playbook = ""
+  print "If you want to provision you have to set PLAYBOOK when run vagrant \n"
+end
 
 boxes = [
   {
@@ -31,13 +36,6 @@ Vagrant.configure(2) do |config|
 
       vms.vm.network :private_network, ip: box[:ip]
       config.vm.network "public_network"
-
-      if (defined?(ENV['PLAYBOOK'])).nil? # will now return true or false
-        playbook = "" 
-        print "If you want to provision you have to set PLAYBOOK when run vagrant \n"
-      else
-        playbook = ENV['PLAYBOOK']
-      end
 
       if playbook != ""
         vms.vm.provision :ansible do |ansible|

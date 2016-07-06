@@ -2,7 +2,7 @@
   sudo: yes
   vars:
     work_dir: /opt/devops_challenge/
-    image_version: "tactivos/devops-challenge:0.0.1"
+    image_version: "tactivos/devops-challenge:0.0.2"
   tasks:
     - name: deploy nuevo compose file
       template: src=templates/docker-compose.yml.j2 dest={{ work_dir }}/docker-compose.yml mode=664
