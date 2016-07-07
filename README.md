@@ -53,7 +53,7 @@ Before run the upgrade you can open other terminal and run this to check:
 ```
 while true; do curl 192.168.33.11:80/ping -s -o /dev/null -w "%{http_code} \n"; sleep 1; done
 ```
-Also, you can see the haproxy ui on 192.168.33.11:80 on your browser. user/pass: stats
+Also, you can check the haproxy ui accessing ot `http://192.168.33.11:70` on your browser with `user/pass: stats`
 
 
 ##########################################
