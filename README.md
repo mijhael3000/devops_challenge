@@ -8,7 +8,7 @@ Requirement
 My solution
 ===========
 Currently I have not worked with docker so much, but I think a fast aproach is having  this containers architecture on the same host:
-
+```
     user
       |
    haproxy
@@ -16,6 +16,7 @@ Currently I have not worked with docker so much, but I think a fast aproach is h
     /  \
    /    \
 app1    app2
+```
 
 I use haproxy as a loadbalancing container between two app containers with the current image release.
 When I want to upgrade apps container whithout downtime I run an script for removing app2 from LB pool, upgrade and then the same with app1.
@@ -24,29 +25,34 @@ How to run it
 =============
 
 Clone this repo with:
-
+```
 git clone git@github.com:mijhael3000/devops_challenge.git
 cd devops_challenge
+```
 
 deploy VM and install docker 
 ============================
-
-PLAYBOOK="./install_docker.yml" vagrant provision
+```
+PLAYBOOK="./install_docker.yml" vagrant up
+```
 
 provision container instances
 =============================
-
+```
 PLAYBOOK="./provision_docker_containers.yml" vagrant provision
+```
 
 Upgrade apps's container release
 ================================
-
+```
 PLAYBOOK="./update_image_containers.yml" vagrant provision
+```
 
 Before run the upgrade you can open other terminal and run this to check:
 
+```
 while true; do curl 192.168.33.11:80/ping -s -o /dev/null -w "%{http_code} \n"; sleep 1; done
-
+```
 Also, you can see the haproxy ui on 192.168.33.11:80 on your browser. user/pass: stats
 
 
